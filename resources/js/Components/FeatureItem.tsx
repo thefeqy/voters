@@ -1,7 +1,8 @@
 import {Feature} from "@/types";
 import {useState} from "react";
+import {Link} from "@inertiajs/react";
 
-function FeatureItem({feature}: {feature: Feature}) {
+function FeatureItem({feature}: { feature: Feature }) {
 
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleReadMore = () => {
@@ -26,13 +27,25 @@ function FeatureItem({feature}: {feature: Feature}) {
                     </button>
                 </div>
                 <div className="flex-1">
-                    <h2 className="text-2xl mb-2">{feature.name}</h2>
-                    <p>{isExpanded ? feature.description : `${feature.description.slice(0, 30)} ...`}</p>
-                    <button>
-                        <span onClick={toggleReadMore} className="text-amber-500 hover:underline cursor-pointer">
-                            {isExpanded ? 'Read less' : 'Read more'}
-                        </span>
-                    </button>
+                    <h2 className="text-2xl mb-2">
+                        <Link href={route('features.show', feature)}>{feature.name}</Link>
+                    </h2>
+                    {feature.description?.length > 20 && (
+                        <>
+                            <p>{isExpanded ? feature.description : `${feature.description.slice(0, 30)} ...`}</p>
+                            <button>
+                                <span onClick={toggleReadMore} className="text-amber-500 hover:underline cursor-pointer">
+                                    {isExpanded ? 'Read less' : 'Read more'}
+                                </span>
+                            </button>
+                        </>
+                    )}
+
+
+
+                    {feature.description?.length <= 200 && (
+                        <p>{feature.description}</p>
+                    )}
                 </div>
             </div>
         </div>

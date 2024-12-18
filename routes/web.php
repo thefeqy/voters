@@ -19,8 +19,7 @@ Route::middleware(['auth'])
                 Route::get('/dashboard', function () {
                     return Inertia::render('Dashboard');
                 })->name('dashboard');
-                Route::get('/features', [FeatureController::class, 'index'])
-                    ->name('features.index');
+                Route::resource('/features', FeatureController::class);
             });
     });
 
