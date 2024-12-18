@@ -19,8 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
-            $table->boolean('upvote')
-                ->default(false);
+            $table->boolean('upvote');
         });
     }
 

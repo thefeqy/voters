@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\FeatureResource;
 use App\Models\Feature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class FeatureController extends Controller
@@ -14,7 +15,10 @@ class FeatureController extends Controller
      */
     public function index()
     {
-        $paginatedFeatures = Feature::latest()->paginate(15);
+        $paginatedFeatures = Feature::query()
+            ->withVotesAndUserFlags(auth()->id())
+            ->latest()
+            ->paginate(15);
 
         return Inertia::render('Features/Index', [
             'features' => FeatureResource::collection($paginatedFeatures),
@@ -49,8 +53,12 @@ class FeatureController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Feature $feature)
+    public function show(int $id)
     {
+        $feature = Feature::query()
+            ->withVotesAndUserFlags(auth()->id())
+            ->findOrFail($id);
+
         return Inertia::render('Features/Show', [
             'feature' => new FeatureResource($feature),
         ]);
