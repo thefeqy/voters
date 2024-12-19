@@ -15,11 +15,19 @@ export type PaginatedData<T = any> = {
     meta: Record<string, unknown>;
 }
 
+export type Comment = {
+    id: number;
+    comment: string;
+    user: User;
+    created_at: string;
+}
+
 export type Feature = {
     id: number;
     name: string;
     description: string;
     user: User;
+    comments: Comment[];
     upvotes_count: number;
     user_has_upvoted: boolean;
     user_has_downvoted: boolean;

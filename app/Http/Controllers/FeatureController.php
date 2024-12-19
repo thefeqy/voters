@@ -18,8 +18,7 @@ class FeatureController extends Controller
         $paginatedFeatures = Feature::query()
             ->withVotesAndUserFlags(auth()->id())
             ->orderBy('id', 'desc')
-            ->paginate(15);
-
+            ->cursorPaginate(15);
 
         if ($request->expectsJson()) {
             return FeatureResource::collection($paginatedFeatures);
@@ -61,6 +60,10 @@ class FeatureController extends Controller
     public function show(int $id)
     {
         $feature = Feature::query()
+            ->with(['comments' => function ($query) {
+                $query->with('user')
+                    ->orderBy('created_at', 'desc');
+            }])
             ->withVotesAndUserFlags(auth()->id())
             ->findOrFail($id);
 

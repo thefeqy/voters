@@ -8,7 +8,9 @@ import axios from "axios";
 
 export default function Index({ features }: { features: PaginatedData<Feature> }) {
     const [featuresData, setFeaturesData] = useState<Feature[]>(features.data);
-    const [currentPage, setCurrentPage] = useState<number>(features.meta.current_page as number);
+    const [path, setPath] = useState<string>(features.meta.path as string);
+    const [nextCursor, setNextCursor] = useState<string>(features.meta.next_cursor as string);
+
     const { ref, inView } = useInView({});
 
     useEffect(() => {
@@ -16,11 +18,11 @@ export default function Index({ features }: { features: PaginatedData<Feature> }
     }, [features]);
 
     useEffect(() => {
-        if(inView) {
-            axios.get(route('features.index', {page: currentPage + 1})).then(response => {
+        if(inView && nextCursor) {
+            axios.get(`${path}?cursor=${nextCursor}`).then(response => {
                 setFeaturesData(prevFeatures => [...prevFeatures, ...response.data.data]);
 
-                setCurrentPage(response.data.meta.current_page);
+                setNextCursor(response.data.meta.next_cursor);
             })
         }
     }, [inView]);
@@ -43,9 +45,9 @@ export default function Index({ features }: { features: PaginatedData<Feature> }
 
 
             {featuresData.map((feature, index) => (
-                <FeatureItem feature={feature} key={`${feature.id}-${index}`} />
+                <FeatureItem feature={feature} key={`${feature.id}`} />
             ))}
-            <div ref={ref}></div>
+            <div className='-translate-y-32' ref={ref}></div>
         </AuthenticatedLayout>
     );
 }
