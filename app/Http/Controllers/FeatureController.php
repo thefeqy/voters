@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionEnum;
 use App\Http\Resources\FeatureResource;
 use App\Models\Feature;
 use Illuminate\Http\Request;
@@ -34,6 +35,7 @@ class FeatureController extends Controller
      */
     public function create()
     {
+        abort_unless(auth()->user()->can(PermissionEnum::ManageFeatures), 403);
         return Inertia::render('Features/Create');
     }
 
@@ -42,6 +44,8 @@ class FeatureController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->can(PermissionEnum::ManageFeatures), 403);
+
         $data = $request->validate([
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
@@ -77,6 +81,8 @@ class FeatureController extends Controller
      */
     public function edit(Feature $feature)
     {
+        abort_unless(auth()->user()->can(PermissionEnum::ManageFeatures), 403);
+
         return Inertia::render('Features/Edit', [
             'feature' => new FeatureResource($feature),
         ]);
@@ -87,6 +93,8 @@ class FeatureController extends Controller
      */
     public function update(Request $request, Feature $feature)
     {
+        abort_unless(auth()->user()->can(PermissionEnum::ManageFeatures), 403);
+
         $data = $request->validate([
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
@@ -102,6 +110,8 @@ class FeatureController extends Controller
      */
     public function destroy(Feature $feature)
     {
+        abort_unless(auth()->user()->can(PermissionEnum::ManageFeatures), 403);
+
         $feature->delete();
 
         return to_route('features.index')->with('success', 'Feature deleted successfully.');

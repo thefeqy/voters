@@ -1,12 +1,15 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import {Head, usePage} from '@inertiajs/react';
 import {Feature, PaginatedData} from "@/types";
 import FeatureItem from "@/Components/FeatureItem";
 import {FeatureUpvote} from "@/Components/FeatureUpvote";
 import {NewCommentForm} from "@/Components/NewCommentForm";
 import {CommentItem} from "@/Components/CommentItem";
+import {can} from "@/helpers";
 
-export default function Show({ feature }: { feature: Feature }) {
+export default function Show({feature}: { feature: Feature }) {
+    const user = usePage().props.auth.user;
+
     return (
         <AuthenticatedLayout
             header={
@@ -24,7 +27,7 @@ export default function Show({ feature }: { feature: Feature }) {
                         <h2 className="text-2xl mb-2">{feature.name}</h2>
                         <p>{feature.description}</p>
                         <div className="mt-8">
-                            <NewCommentForm feature={feature}/>
+                            {can(user, 'manage_comments') && <NewCommentForm feature={feature}/>}
 
                             {feature.comments.map(comment => (
                                 <CommentItem key={comment.id} comment={comment}/>

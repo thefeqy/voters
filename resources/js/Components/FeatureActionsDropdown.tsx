@@ -1,7 +1,9 @@
 import Dropdown from "@/Components/Dropdown";
 import {Feature} from "@/types";
+import {usePage} from "@inertiajs/react";
 
 export const FeatureActionsDropdown = ({feature}: {feature: Feature}) => {
+
     return (
         <Dropdown>
             <Dropdown.Trigger>

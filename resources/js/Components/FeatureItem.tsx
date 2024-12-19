@@ -1,12 +1,15 @@
 import {Feature} from "@/types";
 import {useState} from "react";
-import {Link, useForm} from "@inertiajs/react";
+import {Link, useForm, usePage} from "@inertiajs/react";
 import {FeatureActionsDropdown} from "@/Components/FeatureActionsDropdown";
 import cn from "classnames";
 import {FeatureUpvote} from "@/Components/FeatureUpvote";
+import {can} from "@/helpers";
 
 function FeatureItem({feature}: { feature: Feature }) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const user = usePage().props.auth.user;
+
     const toggleReadMore = () => {
         setIsExpanded(!isExpanded);
     }
@@ -44,9 +47,9 @@ function FeatureItem({feature}: { feature: Feature }) {
                     </div>
                 </div>
 
-                <div>
+                {can(user, 'manage_features') && <div>
                     <FeatureActionsDropdown feature={feature}/>
-                </div>
+                </div>}
             </div>
         </div>
     );

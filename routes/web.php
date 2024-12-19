@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PermissionEnum;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ProfileController;
@@ -29,8 +30,10 @@ Route::middleware(['auth'])
                     ->name('upvote.destroy');
 
                 Route::post('/features/{feature}/comment', [CommentController::class, 'store'])
+                    ->middleware('can:' . PermissionEnum::ManageComments->value)
                     ->name('comments.store');
                 Route::delete('/features/{comment}/delete', [CommentController::class, 'destroy'])
+                    ->middleware('can:' . PermissionEnum::ManageComments->value)
                     ->name('comments.destroy');
             });
     });
