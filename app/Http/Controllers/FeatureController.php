@@ -13,12 +13,17 @@ class FeatureController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $paginatedFeatures = Feature::query()
             ->withVotesAndUserFlags(auth()->id())
-            ->latest()
+            ->orderBy('id', 'desc')
             ->paginate(15);
+
+
+        if ($request->expectsJson()) {
+            return FeatureResource::collection($paginatedFeatures);
+        }
 
         return Inertia::render('Features/Index', [
             'features' => FeatureResource::collection($paginatedFeatures),

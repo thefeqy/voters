@@ -47,4 +47,21 @@ class Feature extends Model
                 },
             ]);
     }
+
+    public function loadData()
+    {
+        return $this->loadCount([
+                'upvotes as upvotes_count' => function ($query) {
+                    $query->select(DB::raw('SUM(CASE WHEN upvote = TRUE THEN 1 ELSE -1 END)'));
+                }
+            ])
+            ->loadCount([
+                'upvotes as user_has_upvoted' => function ($query) {
+                    $query->where('user_id', auth()->id())->where('upvote', true);
+                },
+                'upvotes as user_has_downvoted' => function ($query) {
+                    $query->where('user_id', auth()->id())->where('upvote', false);
+                },
+            ]);
+    }
 }

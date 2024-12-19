@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FeatureResource;
 use App\Models\Feature;
 use App\Models\Upvote;
+use DB;
 use Illuminate\Http\Request;
 
 class VoteController extends Controller
@@ -15,20 +17,29 @@ class VoteController extends Controller
             'upvote' => ['required', 'boolean'],
         ]);
 
-        Upvote::updateOrCreate([
+        $upvote = Upvote::updateOrCreate([
             'feature_id' => $data['feature_id'],
             'user_id' => auth()->id(),
         ], [
             'upvote' => $data['upvote'],
         ]);
 
-        return back();
+        $feature->loadData();
+
+        return new FeatureResource($feature);
     }
 
-    public function destroy(Feature $feature)
+    public function destroy(int $id): FeatureResource
     {
-        $feature->upvotes()->where('user_id', auth()->id())->delete();
+        $userId = auth()->id();
+        $feature = Feature::query()
+            ->withVotesAndUserFlags($userId)
+            ->findOrFail($id);
 
-        return back();
+        $feature->upvotes()->where('user_id', $userId)->delete();
+
+        $feature->loadData();
+
+        return new FeatureResource($feature);
     }
 }

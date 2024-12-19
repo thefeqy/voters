@@ -2,8 +2,29 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, Link} from '@inertiajs/react';
 import {Feature, PaginatedData} from "@/types";
 import FeatureItem from "@/Components/FeatureItem";
+import {useInView} from "react-intersection-observer";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 export default function Index({ features }: { features: PaginatedData<Feature> }) {
+    const [featuresData, setFeaturesData] = useState<Feature[]>(features.data);
+    const [currentPage, setCurrentPage] = useState<number>(features.meta.current_page as number);
+    const { ref, inView } = useInView({});
+
+    useEffect(() => {
+        setFeaturesData(features.data);
+    }, [features]);
+
+    useEffect(() => {
+        if(inView) {
+            axios.get(route('features.index', {page: currentPage + 1})).then(response => {
+                setFeaturesData(prevFeatures => [...prevFeatures, ...response.data.data]);
+
+                setCurrentPage(response.data.meta.current_page);
+            })
+        }
+    }, [inView]);
+
     return (
         <AuthenticatedLayout
             header={
@@ -21,9 +42,10 @@ export default function Index({ features }: { features: PaginatedData<Feature> }
             </div>
 
 
-            {features.data.map((feature) => (
-                <FeatureItem feature={feature} key={feature.id} />
+            {featuresData.map((feature, index) => (
+                <FeatureItem feature={feature} key={`${feature.id}-${index}`} />
             ))}
+            <div ref={ref}></div>
         </AuthenticatedLayout>
     );
 }

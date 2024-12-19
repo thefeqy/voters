@@ -12,6 +12,7 @@ export interface User {
 export type PaginatedData<T = any> = {
     data: T[];
     links: Record<string, string>;
+    meta: Record<string, unknown>;
 }
 
 export type Feature = {
