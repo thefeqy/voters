@@ -22,7 +22,6 @@ export default function Index({auth, features}: PageProps<{ features: PaginatedD
 
     useEffect(() => {
         setFeaturesData(features.data);
-        console.log(featuresData)
     }, [features]);
 
     useEffect(() => {

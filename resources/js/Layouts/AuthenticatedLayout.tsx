@@ -1,5 +1,6 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import FlashMessage from '@/Components/FlashMessage';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
@@ -10,6 +11,7 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
+    const { flash } = usePage().props as unknown as { flash: { message?: string } };
     const success: string = usePage().props.success as string;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -193,7 +195,11 @@ export default function Authenticated({
                         </div>
                     )}
 
-                    <main>{children}</main>
+                    <main>
+                        {flash?.message && <FlashMessage flash={flash} type='info'/>}
+
+                        {children}
+                    </main>
                 </div>
             </div>
         </div>
